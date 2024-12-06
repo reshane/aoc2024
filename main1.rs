@@ -5,7 +5,6 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
-mod day6;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -31,10 +30,7 @@ fn main() {
             },
             5 => {
                 day5::solve();
-            },
-            6 => {
-                day6::solve();
-            },
+            }
             _ => {
                 println!("NO IMPLEMENTATION!");
             },
@@ -46,26 +42,3 @@ fn main() {
     }
 }
 
-fn solve_p2(_contents: String) -> i64 {
-    0
-}
-
-#[test]
-fn test_sample_2() {
-    let contents = std::fs::read_to_string("sample_6.txt").expect("WHERE IS THE FILE");
-    let result = solve_p2(contents);
-    println!("{result}");
-    assert!(result == 0);
-}
-
-fn solve_p1(_contents: String) -> i64 {
-    0
-}
-
-#[test]
-fn test_sample_1() {
-    let contents = std::fs::read_to_string("sample_6.txt").expect("WHERE IS THE FILE");
-    let result = solve_p1(contents);
-    println!("{result}");
-    assert!(result == 0);
-}
