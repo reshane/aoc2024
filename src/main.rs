@@ -8,6 +8,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+mod day9;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -43,12 +44,15 @@ fn main() {
             8 => {
                 day8::solve();
             },
+            9 => {
+                day9::solve();
+            },
             _ => {
                 println!("NO IMPLEMENTATION!");
             },
         }
     } else {
-        let contents = std::fs::read_to_string("input_9.txt").expect("WHERE IS THE FILE");
+        let contents = std::fs::read_to_string("input_10.txt").expect("WHERE IS THE FILE");
         println!("part 1: {}", solve_p1(contents.clone()));
         println!("part 2: {}", solve_p2(contents));
     }
@@ -60,7 +64,7 @@ fn solve_p2(_contents: String) -> i64 {
 
 #[test]
 fn test_sample_2() {
-    let contents = std::fs::read_to_string("sample_9.txt").expect("WHERE IS THE FILE");
+    let contents = std::fs::read_to_string("sample_10.txt").expect("WHERE IS THE FILE");
     let result = solve_p2(contents);
     println!("{result}");
     assert!(result == 0);
@@ -72,8 +76,9 @@ fn solve_p1(_contents: String) -> i64 {
 
 #[test]
 fn test_sample_1() {
-    let contents = std::fs::read_to_string("sample_9.txt").expect("WHERE IS THE FILE");
+    let contents = std::fs::read_to_string("sample_10.txt").expect("WHERE IS THE FILE");
     let result = solve_p1(contents);
     println!("{result}");
     assert!(result == 0);
 }
+
