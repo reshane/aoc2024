@@ -44,7 +44,7 @@ pub fn solve_p2(contents: String) -> i64 {
     let mut total: i64 = 0;
     let blocks: Vec<&str> = contents.split("don't()").collect();
     for (j, block) in blocks.into_iter().enumerate() {
-        assert!(None == block.find("don't()"));
+        assert!(!block.contains("don't()"));
         if j == 0 {
             let line = block;
             total += parse_mul(line);

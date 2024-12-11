@@ -98,8 +98,7 @@ fn solve_p1(contents: String) -> i64 {
     for line in contents.lines() {
         // characters alternate occupied & free
         let total_blocks = line.chars()
-            .enumerate()
-            .map(|(_,c)| { c.to_digit(RADIX).unwrap() as usize })
+            .map(|c| { c.to_digit(RADIX).unwrap() as usize })
             .sum::<usize>();
         let file_blocks = line.chars()
             .enumerate()
@@ -134,8 +133,8 @@ fn solve_p1(contents: String) -> i64 {
             }
             i += 1;
         }
-        for k in 0..i {
-            total += blocks[k] * k as i64;
+        for (k, block) in blocks.iter().enumerate().take(i) {
+            total += block * k as i64;
         }
         // println!("{blocks:?}");
     }

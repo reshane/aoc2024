@@ -36,7 +36,7 @@ fn parse_input(contents: String) -> (Vec<i64>, Vec<i64>) {
     let mut left: Vec::<i64> = vec![];
     let mut right: Vec::<i64> = vec![];
     for line in contents.lines() {
-        if line.len() > 0 {
+        if !line.is_empty() {
             let line: Vec<&str> = line.split(" ").filter(|c| { c.parse::<i64>().is_ok() }).collect();
             left.push(line[0].parse::<i64>().unwrap());
             right.push(line[1].parse::<i64>().unwrap());

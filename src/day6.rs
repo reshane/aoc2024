@@ -23,7 +23,7 @@ fn solve_p2(contents: String) -> i64 {
     let mut cycling;
     while !done {
         (done, cycling) = guard.step();
-        assert!(cycling == false);
+        assert!(!cycling);
     }
     // if placing an obstacle in the path creates a cycle, increment
     let mut total = 0;
@@ -71,17 +71,19 @@ fn test_sample_2b() {
     assert!(result == 2);
 }
 
+type Point = (i64, i64);
+
 #[derive(Default, Debug, Clone)]
 struct Guard {
     gather_info: bool,
-    pos: (i64, i64),
-    dir: (i64, i64),
-    bounds: (i64, i64),
-    obstacles: Vec<(i64, i64)>,
+    pos: Point,
+    dir: Point,
+    bounds: Point,
+    obstacles: Vec<Point>,
     path_len: i64,
-    visited: HashSet<(i64, i64)>,
-    path: HashMap<(i64, i64), Vec<(i64, i64)>>,
-    cycles: Vec<((i64, i64), (i64, i64), (i64, i64))>,
+    visited: HashSet<Point>,
+    path: HashMap<Point, Vec<Point>>,
+    cycles: Vec<(Point, Point, Point)>,
 }
 
 
@@ -89,8 +91,7 @@ struct Guard {
 impl Guard {
 
     fn from_string(contents: String) -> Guard {
-        let mut guard: Guard = Guard::default();
-        guard.path_len = 1;
+        let mut guard: Guard = Guard { path_len: 1, ..Default::default() };
         let mut obstacles: Vec<(i64, i64)> = vec![];
         contents.lines().enumerate().for_each(|(i, line)| {
             guard.bounds.1 += 1;
@@ -103,19 +104,19 @@ impl Guard {
                     },
                     '^' => {
                         guard.pos = (j as i64, i as i64);
-                        guard.dir = (0 as i64, -1 as i64);
+                        guard.dir = (0_i64, -1_i64);
                     },
                     '>' => {
                         guard.pos = (j as i64, i as i64);
-                        guard.dir = (1 as i64, 0 as i64);
+                        guard.dir = (1_i64, 0_i64);
                     },
                     'v' => {
                         guard.pos = (j as i64, i as i64);
-                        guard.dir = (0 as i64, 1 as i64);
+                        guard.dir = (0_i64, 1_i64);
                     },
                     '<' => {
                         guard.pos = (j as i64, i as i64);
-                        guard.dir = (-1 as i64, 0 as i64);
+                        guard.dir = (-1_i64, 0_i64);
                     },
                     _ => unreachable!(),
                 }
@@ -130,32 +131,31 @@ impl Guard {
         // if anything is colinear with the right side of the guard
         // p + dir is a potential cycle creator
         if self.gather_info {
-            let potentially_cyclical;
-            match self.dir {
+            let potentially_cyclical = match self.dir {
                 (0,1) => {
                     // here we are moving down
                     // so if there is any o such that px > ox && py == oy
-                    potentially_cyclical = self.obstacles.iter().any(|o| {
+                    self.obstacles.iter().any(|o| {
                         o.0 < p.0 && o.1 == p.1
-                    });
+                    })
                 },
                 (0,-1) => {
-                    potentially_cyclical = self.obstacles.iter().any(|o| {
+                    self.obstacles.iter().any(|o| {
                         o.0 > p.0 && o.1 == p.1
-                    });
+                    })
                 },
                 (1,0) => {
-                    potentially_cyclical = self.obstacles.iter().any(|o| {
+                    self.obstacles.iter().any(|o| {
                         o.1 > p.1 && o.0 == p.0
-                    });
+                    })
                 },
                 (-1,0) => {
-                    potentially_cyclical = self.obstacles.iter().any(|o| {
+                    self.obstacles.iter().any(|o| {
                         o.1 < p.1 && o.0 == p.0
-                    });
+                    })
                 },
                 _ => unreachable!(),
-            }
+            };
             let pc = (p.0+self.dir.0, p.1+self.dir.1);
             if potentially_cyclical && 
                 !self.cycles.contains(&(pc, p, self.dir)) &&
@@ -241,29 +241,26 @@ impl Guard {
             (0, 1) | (0, -1) => {
                 // find obstacle matching x
                 self.obstacles.iter().for_each(|o| {
-                    if self.pos.0 == o.0 {
-                        // println!("{o:?}");
-                        if (self.dir.1 < 0 && o.1 < self.pos.1) || 
-                            (self.dir.1 > 0 && o.1 > self.pos.1) {
-                            potential_bumps.push(*o);
-                        }
+                    if self.pos.0 == o.0 && 
+                        ( (self.dir.1 < 0 && o.1 < self.pos.1) || 
+                        (self.dir.1 > 0 && o.1 > self.pos.1) ) {
+                        potential_bumps.push(*o);
                     }
                 });
             },
             (1, 0) | (-1, 0) => {
                 // find obstacle matching y
                 self.obstacles.iter().for_each(|o| {
-                    if self.pos.1 == o.1 {
-                        if (self.dir.0 < 0 && o.0 < self.pos.0) || 
-                            (self.dir.0 > 0 && o.0 > self.pos.0) {
-                            potential_bumps.push(*o);
-                        }
+                    if self.pos.1 == o.1 && 
+                        ( (self.dir.0 < 0 && o.0 < self.pos.0) || 
+                        (self.dir.0 > 0 && o.0 > self.pos.0) ) {
+                        potential_bumps.push(*o);
                     }
                 });
             }
             _ => unreachable!(),
         }
-        if potential_bumps.len() == 0 {
+        if potential_bumps.is_empty() {
             // construct the visited set
             self.run_into_wall();
             return (true, false);
@@ -317,7 +314,7 @@ fn solve_p1(contents: String) -> i64 {
     let mut cycling;
     while !done {
         (done, cycling) = guard.step();
-        assert!(cycling == false);
+        assert!(!cycling);
     }
     guard.visited.len() as i64
 }

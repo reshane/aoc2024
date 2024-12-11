@@ -47,10 +47,10 @@ impl FromStr for Equation {
         let split: Vec<&str> = raw.split(":").collect();
         let result = split[0].parse::<i64>().map_err(|_e| {
             println!("ERROR: [{}], [{}]", split[0], raw);
-            return Err::<Equation, ()>(());
+            Err::<Equation, ()>(())
         }).unwrap();
         let operands: Vec<i64> = split[1].split(" ")
-            .filter(|s| { s.len() > 0 })
+            .filter(|s| { !s.is_empty() })
             .map(|c| {
                 c.parse::<i64>().expect("INVALID OPERAND")
             })
@@ -96,10 +96,7 @@ impl Equation {
                 operands: operands.to_vec(),
                 result: self.result,
             };
-            let valid = eq.has_valid_solution_dp_1(1);
-            // println!("{eq:?} {valid}");
-            valid
-
+            eq.has_valid_solution_dp_1(1)
         })
     }
 
@@ -219,7 +216,6 @@ impl Equation {
                     _ => panic!("There are only parts 1 & 2"),
                 }
             }
-            println!("");
             if self.eval(&operators) {
                 return true;
             }
@@ -228,7 +224,7 @@ impl Equation {
         false
     }
 
-    fn eval(&self, ops: &Vec<Operator>) -> bool {
+    fn eval(&self, ops: &[Operator]) -> bool {
         let mut total = self.operands[0];
         for i in 1..self.operands.len() {
             match ops[i-1] {
@@ -250,7 +246,7 @@ impl Equation {
     // eval with cat having higher precedence than add and mul
     // definitely didn't write this because I forgot everything gets evaluated
     // from left to right
-    fn eval_cat_prec(&self, ops: &Vec<Operator>) -> bool {
+    fn eval_cat_prec(&self, ops: &[Operator]) -> bool {
         let mut operand_idx = 0;
         let mut stack: Vec<i64> = vec![self.operands[operand_idx]];
         while operand_idx < self.operands.len()-1 {

@@ -18,7 +18,7 @@ fn solve_p2(contents: String) -> i64 {
 
         let (mut ord, expected) = parse_ord(ord, &deps);
 
-        if expected.len() != 0 {
+        if !expected.is_empty() {
             // we need to re-order them and then take the middle one
             if false {
                 // check definition for a cool topo sort that is useless here
@@ -32,18 +32,18 @@ fn solve_p2(contents: String) -> i64 {
     total
 }
 
-fn reorder_sort(ord: &mut Vec<i64>, deps: &HashMap<i64, Vec<i64>>) {
+fn reorder_sort(ord: &mut [i64], deps: &HashMap<i64, Vec<i64>>) {
     ord.sort_by(|a, b| {
-        if let Some(a_deps) = deps.get(&a) {
+        if let Some(a_deps) = deps.get(a) {
             // if a depends on b, b must appear ahead of  a
             // so a is less than b
-            if a_deps.contains(&b) {
+            if a_deps.contains(b) {
                 return std::cmp::Ordering::Less;
             }
         }
-        if let Some(b_deps) = deps.get(&b) {
+        if let Some(b_deps) = deps.get(b) {
             // the other way round
-            if b_deps.contains(&a) {
+            if b_deps.contains(a) {
                 return std::cmp::Ordering::Greater;
             }
         }
@@ -60,7 +60,7 @@ fn reorder(ord: &Vec<i64>, deps: &HashMap<i64, Vec<i64>>) -> Vec<i64> {
         // push the dependent onto the stack
         // if the stack already contains dep(o), dont push
         // then push o
-        if let Some(o_dep) = deps.get(&o) {
+        if let Some(o_dep) = deps.get(o) {
             let mut idx = o_dep.len();
             loop {
                 idx -= 1;
@@ -118,7 +118,7 @@ fn parse_ord(raw_ord: &str, deps: &HashMap<i64, Vec<i64>>) -> (Vec<i64>, HashSet
             expected.remove(&o);
         }
         if let Some(dep) = deps.get(&o) {
-            dep.into_iter().for_each(|d| {
+            dep.iter().for_each(|d| {
                 if ord.contains(d) {
                     expected.insert(*d);
                 }
@@ -148,7 +148,7 @@ fn solve_p1(contents: String) -> i64 {
 
         let (ord, expected) = parse_ord(ord, &deps);
 
-        if expected.len() == 0 {
+        if expected.is_empty() {
            total += ord[ord.len()/2]; 
         }
     }

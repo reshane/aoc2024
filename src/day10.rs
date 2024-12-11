@@ -15,7 +15,7 @@ fn solve_p2(contents: String) -> i64 {
     for trailhead in trailheads {
         let mut queue = Vec::<Node>::new();
         queue.push(trailhead);
-        while queue.len() != 0 {
+        while !queue.is_empty() {
             let curr = queue.remove(0);
             if curr.e == 9 {
                 total += 1;
@@ -35,7 +35,7 @@ fn test_sample_2() {
     let contents = std::fs::read_to_string("sample_10.txt").expect("WHERE IS THE FILE");
     let result = solve_p2(contents);
     println!("{result}");
-    assert!(result == 0);
+    assert!(result == 81);
 }
 
 #[derive(Debug, Eq, Hash, PartialEq, Clone)]
@@ -50,7 +50,7 @@ fn parse_input(contents: String) -> (Vec<Node>, HashMap<Node, Vec<Node>>) {
     let mut map = HashMap::<Node, Vec<Node>>::new();
 
     let contents: Vec<&str> = contents.split("\n")
-        .filter(|l| l.len() > 0 )
+        .filter(|l| !l.is_empty() )
         .collect();
     for y in 0..contents.len() {
         let line = contents[y];
@@ -105,7 +105,7 @@ fn solve_p1(contents: String) -> i64 {
         let mut queue = Vec::<Node>::new();
         let mut summits = HashSet::<Node>::new();
         queue.push(trailhead);
-        while queue.len() != 0 {
+        while !queue.is_empty() {
             let curr = queue.remove(0);
             if curr.e == 9 {
                 if !summits.contains(&curr) {

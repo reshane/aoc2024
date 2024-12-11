@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
 
+type Point = (i64, i64);
+
 pub fn solve() {
     let contents = std::fs::read_to_string("input_8.txt").expect("WHERE IS THE FILE");
     println!("part 1: {}", solve_p1(contents.clone()));
@@ -11,9 +13,9 @@ fn solve_p2(contents: String) -> i64 {
     // println!("{contents}");
     let ((width, height), freqs) = parse_input(contents);
     // println!("{freqs:?}");
-    let mut antinodes = HashSet::<(i64, i64)>::new();
+    let mut antinodes = HashSet::<Point>::new();
     for f in freqs.keys() {
-        let nodes: Vec<(i64, i64)> = freqs.get(f).unwrap().clone();
+        let nodes: Vec<Point> = freqs.get(f).unwrap().clone();
         let mut i = 0;
         while i < nodes.len()-1 {
             let mut j = i + 1;
@@ -24,7 +26,7 @@ fn solve_p2(contents: String) -> i64 {
                 antinodes.insert(b);
                 let d = (a.0 - b.0, a.1 - b.1);
                 // a + d and b - d
-                let mut k = 1 as i64;
+                let mut k = 1_i64;
                 loop {
                     let ad = (a.0 + (d.0 * k), a.1 + (d.1 * k));
                     let bd = (b.0 - (d.0 * k), b.1 - (d.1 * k));
@@ -60,16 +62,16 @@ fn test_sample_2() {
     assert!(result == 34);
 }
 
-fn parse_input(contents: String) -> ((i64, i64), HashMap<String, Vec<(i64, i64)>>) {
-    let mut nodes = HashMap::<String, Vec<(i64, i64)>>::new();
+fn parse_input(contents: String) -> (Point, HashMap<String, Vec<Point>>) {
+    let mut nodes = HashMap::<String, Vec<Point>>::new();
     for (y, line) in contents.lines().enumerate() {
         for x in 0..line.len() {
             let freq = &line[x..x+1];
             match freq {
                 "." => {},
                 _ => {
-                    if nodes.contains_key(&freq.to_string()) {
-                        let mut ns = nodes.get(&freq.to_string()).unwrap().clone();
+                    if nodes.contains_key(freq) {
+                        let mut ns = nodes.get(freq).unwrap().clone();
                         ns.push((x as i64, y as i64));
                         nodes.insert(freq.to_string(), ns.clone());
                     } else {
@@ -87,9 +89,9 @@ fn solve_p1(contents: String) -> i64 {
     // println!("{contents}");
     let ((width, height), freqs) = parse_input(contents);
     // println!("{freqs:?}");
-    let mut antinodes = HashSet::<(i64, i64)>::new();
+    let mut antinodes = HashSet::<Point>::new();
     for f in freqs.keys() {
-        let nodes: Vec<(i64, i64)> = freqs.get(f).unwrap().clone();
+        let nodes: Vec<Point> = freqs.get(f).unwrap().clone();
         let mut i = 0;
         while i < nodes.len()-1 {
             let mut j = i + 1;

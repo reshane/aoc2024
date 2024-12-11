@@ -7,6 +7,8 @@ pub fn solve() {
     println!("secret 3rd part: {}", solve_nothing(contents));
 }
 
+type Point = (i64, i64);
+
 // here is where I misunderstood the prompt
 // This counts the number of XMAS sequences
 // in any configuration...
@@ -20,13 +22,13 @@ fn solve_nothing(contents: String) -> i64 {
     // println!("{xes:?}");
     let mut total = 0;
     for start in xes {
-        let mut queue = Vec::<(usize, (i64, i64))>::new();
-        let ms: Vec<(i64,i64)> = map.get(&start).unwrap().clone();
+        let mut queue = Vec::<(usize, Point)>::new();
+        let ms: Vec<Point> = map.get(&start).unwrap().clone();
         // println!("{start:?}: {ms:?}");
         ms.iter().for_each(|m| { queue.push((1, *m)) });
         // println!("{queue:?}");
         // for each neighbor, push it onto the queue with depth + 1
-        while queue.len() > 0 {
+        while !queue.is_empty() {
             let current = queue.remove(0);
             if current.0 == 3 {
                 // we have an S that started with an X, increment the total
@@ -91,9 +93,9 @@ fn test_sample_2() {
     assert!(result == 9);
 }
 
-fn parse_input(contents: String) -> (Vec<(i64, i64)>, HashMap<(i64, i64), Vec<(i64, i64)>>) {
-    let mut map = HashMap::<(i64, i64), Vec<(i64, i64)>>::new();
-    let mut xes = Vec::<(i64, i64)>::new();
+fn parse_input(contents: String) -> (Vec<Point>, HashMap<Point, Vec<Point>>) {
+    let mut map = HashMap::<Point, Vec<Point>>::new();
+    let mut xes = Vec::<Point>::new();
     // println!("{contents}");
     let lines: Vec<&str> = contents.lines().collect();
     for (i, line) in lines.clone().into_iter().enumerate() {
@@ -103,23 +105,19 @@ fn parse_input(contents: String) -> (Vec<(i64, i64)>, HashMap<(i64, i64), Vec<(i
             if current_val == "X" {
                 xes.push(current_pos);
             }
-            let mut neighbors = Vec::<(i64, i64)>::new();
+            let mut neighbors = Vec::<Point>::new();
             let x_s: usize = (j as i64 - 1).try_into().unwrap_or(0);
             let y_s: usize = (i as i64 - 1).try_into().unwrap_or(0);
             // println!("{current_val} at {current_pos:?}");
             for x in x_s..j+2 {
                 for y in y_s..i+2 {
-                    if y < lines.len() && x < lines[y].len() {
-                        if x != j || y != i {
-                            // println!("{:?}", (x,y));
-                            let neighbor_val = &lines[y][x..x+1];
-                            match (current_val, neighbor_val) {
-                                ("X", "M") | ("M", "A") | ("A", "S") => {
-                                    // println!("{:?} at {:?} -> {:?} at {:?}", current_val, (j,i), neighbor_val, (x,y));
-                                    neighbors.push((x as i64, y as i64));
-                                },
-                                (_, _) => {},
-                            }
+                    if y < lines.len() && x < lines[y].len() && (x != j || y != i) {
+                        let neighbor_val = &lines[y][x..x+1];
+                        match (current_val, neighbor_val) {
+                            ("X", "M") | ("M", "A") | ("A", "S") => {
+                                neighbors.push((x as i64, y as i64));
+                            },
+                            (_, _) => {},
                         }
                     }
                 }
