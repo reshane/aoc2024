@@ -88,6 +88,7 @@ fn test_sample_1() {
     assert!(result == 22);
 }
 
+#[allow(dead_code)]
 fn min_unsolvable(contents: String, bounds: Pos) -> String {
     // binary search for 0
     // in the corrupt input
