@@ -23,6 +23,8 @@ mod day20;
 mod day21;
 mod day22;
 mod day23;
+mod day24;
+mod day25;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -59,40 +61,15 @@ fn main() {
                 21 => day21::solve(),
                 22 => day22::solve(),
                 23 => day23::solve(),
+                24 => day24::solve(),
+                25 => day25::solve(),
                 _ => println!("NO IMPLEMENTATION!"),
             }
         },
-        1 => solve(),
+        1 => {
+            println!("Defaulting to day 1");
+            day1::solve()
+        },
         0 => unreachable!("How did you start this program without calling it??"),
     }
-}
-
-pub fn solve() {
-    let contents = std::fs::read_to_string("input_24.txt").expect("WHERE IS THE FILE");
-    println!("part 1: {}", solve_p1(contents.clone()));
-    println!("part 2: {}", solve_p2(contents));
-}
-
-fn solve_p1(_contents: String) -> i64 {
-    0
-}
-
-#[test]
-fn test_sample_1() {
-    let contents = std::fs::read_to_string("sample_24.txt").expect("WHERE IS THE FILE");
-    let result = solve_p1(contents);
-    println!("{result}");
-    assert!(result == 0);
-}
-
-fn solve_p2(_contents: String) -> i64 {
-    0
-}
-
-#[test]
-fn test_sample_2() {
-    let contents = std::fs::read_to_string("sample_24.txt").expect("WHERE IS THE FILE");
-    let result = solve_p2(contents);
-    println!("{result}");
-    assert!(result == 0);
 }
